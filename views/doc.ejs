@@ -1,12 +1,16 @@
 <%- include('includes/header'); %>
-    <h2>Dokument</h2>
-    <form method="POST" action="/" class="new-doc">
+<h2><%= doc ? 'Edit Document' : 'Create New Document' %></h2>
+    <form method="POST" action="<%= doc ? `/${doc.id}?_method=PUT` : '/' %>" class="new-doc">
         <label for="title">Titel</label>
         <input type="text" name="title" value="<%= doc ? doc.title : '' %>" />
 
         <label for="content">Innehåll</label>
         <textarea name="content"><%= doc ? doc.content : '' %></textarea>
 
-        <input type="submit" value="Uppdatera" />
+        <!-- Hidden field to pass the rowid -->
+        <input type="hidden" name="rowid" value="<%= doc ? doc.id : '' %>" />
+
+        <!-- Update button -->
+        <button type="submit"><%= doc ? 'Uppdatera' : 'Skapa' %></button>
     </form>
 <%- include('includes/footer'); %>

@@ -1,12 +1,13 @@
 import 'dotenv/config'
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 import express from 'express';
 import bodyParser from 'body-parser';
 import path from 'path';
 import morgan from 'morgan';
 import cors from 'cors';
+import methodOverride from 'method-override';
 
 import documents from "./docs.mjs";
 
@@ -17,6 +18,8 @@ app.disable('x-powered-by');
 app.set("view engine", "ejs");
 
 app.use(express.static(path.join(process.cwd(), "public")));
+
+app.use(methodOverride("_method"));
 
 // don't show the log when it is test
 if (process.env.NODE_ENV !== 'test') {
@@ -39,6 +42,18 @@ app.get('/:id', async (req, res) => {
 
 app.get('/', async (req, res) => {
     return res.render("index", { docs: await documents.getAll() });
+});
+
+app.put("/:id", async (req, res) => {
+    const documentId = req.body.rowid;
+    const updatedData = req.body;
+    await documents.updateOne(documentId, updatedData);
+
+    res.redirect('/');
+});
+
+app.get('/skapa', (req, res) => {
+    res.render('doc', { doc: null });
 });
 
 app.listen(port, () => {
